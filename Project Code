@@ -1,0 +1,90 @@
+#include<LiquidCrystal_I2C.h>
+#include<Wire.h>
+#include<DHT.h>
+
+
+#define Soil_moisture 4
+#define DHTPIN A0
+#define DHTTYPE DHT11
+#define PIR 2
+#define LDR 7
+#define LED 8
+LiquidCrystal_I2C lcd(0x27,16,2);
+DHT dht(DHTPIN, DHTTYPE);
+
+
+void setup(){
+ 
+  dht.begin();
+  pinMode(Soil_moisture,INPUT);
+  pinMode(PIR,INPUT);
+  pinMode(LED,OUTPUT);
+  pinMode(LDR,INPUT);
+  lcd.init();
+  lcd.backlight();
+
+}
+void loop(){
+soil_moisture_sensor();
+PIR_sensor();
+Temperature_humidity_sensor();
+LDR_sensor();
+
+}
+
+void soil_moisture_sensor(){
+ 
+  lcd.clear();
+  lcd.setCursor(0,0);
+  int value=digitalRead(4);
+  if(value==HIGH){
+    lcd.print("SML is high");
+  }
+  else{
+    lcd.print("SML level is low");
+  }
+  delay(2000);
+
+}
+void PIR_sensor(){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    int sense=digitalRead(2);
+    if(sense==HIGH){
+        lcd.print("Motion detected");
+    }
+    else{
+        lcd.print("No Motion dected");
+    }
+    delay(2000);
+}
+void Temperature_humidity_sensor(){
+    lcd.clear();
+    
+    float temp=dht.readTemperature();
+    float humi=dht.readHumidity();
+    lcd.setCursor(0, 0);
+    lcd.print("Temp: ");
+    lcd.print(temp);
+    lcd.print("C");
+    
+    lcd.setCursor(0, 1);
+    lcd.print("Humidity: ");
+    lcd.print(humi);
+    lcd.print("%");
+    
+
+    delay(2000);
+    
+}
+void LDR_sensor(){
+    int light=digitalRead(7);
+    if(light==HIGH){
+        digitalWrite(LED,HIGH);
+    }
+    else{
+        digitalWrite(LED,LOW);
+    }
+}
+
+
